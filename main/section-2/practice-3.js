@@ -1,66 +1,27 @@
-'use strict';
-
-function find(collection, ch) {
-    for (let item of collection) {
-        if (item.name === ch) {
-            return item;
-        }
-    }
-
-    return null;
-}
-
-function summarize(collection) {
-    let result = [];
-    for (let item of collection) {
-        let obj = find(result, item)
-        if (obj) {
-            obj.summary++;
-        } else {
-            result.push({name: item, summary: 1});
-        }
-    }
-    return result;
-}
-
-function split(item) {
-    if (item.includes("-")) {
-        let array = item.split("-");
-        return {key: array[0], count: parseInt(array[1], 10)};
-    }
-
-    if (item.includes("[")) {
-        let key = item.charAt(0);
-        let count = parseInt(item.substr(2, item.length - 1));
-        return {key, count};
-    }
-
-    if (item.includes(":")) {
-        let array = item.split(":");
-        return {key: array[0], count: parseInt(array[1], 10)};
-    }
-}
-
-function push(result, key, count) {
-    for (var i = 0; i < count; i++) {
-        result.push(key);
-    }
-}
-
-function expand(collection) {
-    let result = [];
-    for (let item of collection) {
-        if (item.length === 1) {
-            result.push(item);
-        } else {
-            let {key, count} = split(item);
-            push(result, key, count);
-        }
-    }
-    return result;
-}
-
-module.exports = function countSameElements(collection) {
-    let expandedArray = expand(collection);
-    return summarize(expandedArray);
-}
+module.exports = function summarySameElements(collection) {
+	let words = [];
+	let answer = [] ;
+	let ret ;
+	collection.forEach((item) => {
+		let word = item[0] ;
+		ret = words.indexOf(word);
+		if (  ret === -1){
+			words.push(item);
+			if (item.length === 1){
+				answer.push({name:item, summary:1});
+			}
+			else {
+				answer.push({name:word, summary:Number(item.match(/\d+/))});
+			}
+		}
+		else {
+			if(item.length === 1){
+				answer[ret].summary ++;
+			}
+			else {
+				answer[ret].summary += Number(item.match(/\d+/));
+			}
+	       	}
+	});
+	return answer ;
+};
